@@ -1,0 +1,10 @@
+^D:\PROJECT\CG\PHYSICS\BUILD\CMAKEFILES\9FF51AF2D95CB40728B44EB18C622A85\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/project/CG/physics -BD:/project/CG/physics/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/project/CG/physics/build/physics.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

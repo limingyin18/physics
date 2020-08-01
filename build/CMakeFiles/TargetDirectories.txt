@@ -1,0 +1,7 @@
+D:/project/CG/physics/build/CMakeFiles/ALL_BUILD.dir
+D:/project/CG/physics/build/CMakeFiles/ZERO_CHECK.dir
+D:/project/CG/physics/build/src/CMakeFiles/physics.dir
+D:/project/CG/physics/build/src/basic/CMakeFiles/basic.dir
+D:/project/CG/physics/build/src/basic/CMakeFiles/ALL_BUILD.dir
+D:/project/CG/physics/build/src/phyLib/CMakeFiles/phyLib.dir
+D:/project/CG/physics/build/src/phyLib/CMakeFiles/ALL_BUILD.dir
