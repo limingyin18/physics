@@ -1,2 +1,0 @@
-D:\project\CG\physics\build\src\phyLib\Debug\phyLib.pdb
-D:\project\CG\physics\build\src\phyLib\phyLib.dir\Debug\phyLib.pdb

@@ -1,2 +1,0 @@
-D:\project\CG\physics\build\src\basic\Debug\basic.pdb
-D:\project\CG\physics\build\src\basic\basic.dir\Debug\basic.pdb
