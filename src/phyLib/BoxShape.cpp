@@ -31,8 +31,8 @@ int BoxShape::getNumVertices() const
 Vector3f BoxShape::getVertex(size_t index) const 
 {
     int index_i = static_cast<int>(index);
-    float pos1 = (index_i & 1) * 2 - 1;
-    float pos2 = ((index_i & 2) >> 1) * 2 - 1;
-    float pos3 = ((index_i & 4) >> 2) * 2 - 1;
+    float pos1 = static_cast<float>((index_i & 1) * 2 - 1);
+    float pos2 = static_cast<float>(((index_i & 2) >> 1) * 2 - 1);
+    float pos3 = static_cast<float>(((index_i & 4) >> 2) * 2 - 1);
     return {m_len[0]*pos1, m_len[1]*pos2, m_len[2]*pos3};
 }
