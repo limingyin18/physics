@@ -5,12 +5,14 @@ using namespace std;
 using namespace Eigen;
 using namespace cv;
 
+const Vector3f G{0.f, -9.8f, 0.f};
+
 Scene::Scene() : SceneBase(), cube(25)
 {
 	loadResource();
 	initCube();
 
-	box1.m_origin[1] = 5.f;
+	box1.m_origin[1] = 15.f;
 
 	m_time = chrono::system_clock::now();
 	dtAll = 0.f;
@@ -34,16 +36,15 @@ void Scene::update()
 
 void Scene::physicsUpdate(const float dt)
 {
-	box1.m_origin[1] -= dt;
-	AngleAxisf rotation_vector1(45.f / 180.f * 3.14f, Vector3f(0, 0, 1));
-	AngleAxisf rotation_vector2(0, Vector3f(0, 1, 0));
-	AngleAxisf rotation_vector3(0, Vector3f(1, 0, 0));
-	box1.m_rot = rotation_vector1.matrix() * rotation_vector2.matrix() * rotation_vector3.matrix();
+	box1.m_origin += box1.mVelocity *dt;
 
-	AngleAxisf rotation_vector21(0.f, Vector3f(0, 0, 1));
-	AngleAxisf rotation_vector22(0.f, Vector3f(0, 1, 0));
-	AngleAxisf rotation_vector23(0.f, Vector3f(1, 0, 0));
-	box2.m_rot = rotation_vector21.matrix() * rotation_vector22.matrix() * rotation_vector23.matrix();
+	auto penatrationDepth = collisionDetection(box1, box2);
+	if(penatrationDepth)
+	{
+		cout << penatrationDepth.value().normalized() << endl;
+	}
+
+	box1.mVelocity += G*dt;
 
 	modelCube1.setIdentity();
 	modelCube1.block<3, 3>(0, 0) = box1.m_rot;
@@ -52,25 +53,6 @@ void Scene::physicsUpdate(const float dt)
 	modelCube2.setIdentity();
 	modelCube2.block<3, 3>(0, 0) = box2.m_rot;
 	modelCube2.block<3, 1>(0, 3) = box2.m_origin;
-
-	auto penatrationDepth = collisionDetection(box1, box2);
-
-	if (penatrationDepth)
-	{
-		cout << "distance:" << penatrationDepth.value().norm() << endl;
-	}
-	ImGui::Begin("hit");
-	if (penatrationDepth)
-	{
-		ImGui::Text("yes");
-		string depth = "penatration depth: " + to_string(penatrationDepth.value().norm());
-		ImGui::Text(depth.c_str());
-	}
-	else
-	{
-		ImGui::Text("no");
-	}
-	ImGui::End();
 }
 
 void Scene::graphicsUpdate(const float dt)

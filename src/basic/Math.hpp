@@ -1,5 +1,7 @@
 #pragma once
 
+#include <complex>
+
 inline constexpr float pi = 3.1415926f;
 
 inline constexpr int pos_modulo(int n, int d) { return (n % d + d) % d; }
@@ -168,17 +170,17 @@ std::enable_if_t<std::is_arithmetic_v<T>>  fft(std::complex<T>*x, size_t N, size
     for(size_t s = 1; s <= stages; s++)                    // stage
     {                                        
         size_t d = static_cast<size_t>(pow(2, s-1));                            // distance between points in a butterfly
-        complex<T> w = {static_cast<T>(1), static_cast<T>(0)}; // weight
+        std::complex<T> w = {static_cast<T>(1), static_cast<T>(0)}; // weight
         for(size_t k = 0; k < d; k++)                      // butterfly kind
         {
             for(size_t i = k; i < N; i += d*2)             // butterfly 
             {
                 size_t j = i + d;                          // i, j index of butterfly inputs
-                complex<T> temp = x[j*step] * w;
+                std::complex<T> temp = x[j*step] * w;
                 x[j*step] = x[i*step] - temp;
                 x[i*step] = x[i*step] + temp;
             }
-            w = w *complex<T>{std::cos(pi/d), -std::sin(pi/d)};
+            w = w *std::complex<T>{std::cos(pi/d), -std::sin(pi/d)};
         }
     }
 }

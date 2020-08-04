@@ -15,7 +15,7 @@ public:
     float near = 0.1f;
     float far = 1000.0f;
 
-    float targetDistance = 10.0f;
+    float targetDistance = 25.0f;
     Eigen::Vector3f target = {0.0f, 0.0f, 0.0f};
     Eigen::Vector3f rotation ={0.0f, 0.0f, 0.0f};
 

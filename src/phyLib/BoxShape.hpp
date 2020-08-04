@@ -10,10 +10,12 @@ class BoxShape final : public PolyhedralConvexShape
 {
 public:
     Eigen::Vector3f m_len; // length of half side
+    float m_density;
+    float m_mass;
+    Eigen::Matrix3f mInertiaInv;
 
-    float m_density; // density
-    float m_mass; // mass
-    Eigen::Vector3f m_inertia; // inertia
+    Eigen::Vector3f mVelocity;
+    Eigen::Vector3f mOmega;
 
 public:
     BoxShape(Eigen::Vector3f len={1.f, 1.f, 1.f}, 

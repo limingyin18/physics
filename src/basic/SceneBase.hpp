@@ -5,9 +5,9 @@
 #include <unordered_map>
 
 #include <Eigen/Eigen>
-#include <glad/glad.h>
+#include "GLADLib/glad/glad.h"
 #include <GLFW/glfw3.h>
-#include <imgui.h>
+#include "imguiGlfwOpenGL/imgui.h"
 #include "imguiGlfwOpenGL/imgui_impl_glfw.hpp"
 #include "imguiGlfwOpenGL/imgui_impl_opengl3.hpp"
 

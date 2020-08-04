@@ -128,12 +128,6 @@ std::optional<Eigen::Vector3f>
 EPAAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &shape2,
              vector<Vector3f> &simplex)
 {
-    static int a = 0;
-    if (++a == 26)
-    {
-        int t = 1;
-    }
-
     // add points to simplex to 4
     switch (simplex.size())
     {

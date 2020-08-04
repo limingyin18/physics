@@ -8,10 +8,15 @@ BoxShape::BoxShape(Vector3f len, Vector3f origin, Matrix3f rot, float den) :
     PolyhedralConvexShape{origin, rot}, m_len{len}, m_density{den}
 {
     m_mass = m_len.prod()*m_density;
-    m_inertia = 8.f/ 3.f * m_mass *
-                Vector3f{powf(m_len(1), 2)+powf(m_len(2), 2),
-                         powf(m_len(0), 2)+powf(m_len(2), 2),
-                         powf(m_len(0), 2)+powf(m_len(1), 2)};
+    Matrix3f inertia;
+    inertia << powf(m_len(1), 2)+powf(m_len(2), 2), 0.f, 0.f,
+                   0.f, powf(m_len(0), 2)+powf(m_len(2), 2), 0.f,
+                   0.f, 0.f, powf(m_len(0), 2)+powf(m_len(1), 2);
+    inertia *= (m_mass / 3.f);
+    mInertiaInv = inertia.inverse();
+
+    mVelocity = {0.f, 0.f, 0.f};
+    mOmega = {0.f, 0.f, 0.f};
 }
 
 BoxShape::~BoxShape()

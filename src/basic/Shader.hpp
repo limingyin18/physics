@@ -7,7 +7,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include <glad/glad.h>
+#include "GLADLib/glad/glad.h"
 
 class Shader
 {
