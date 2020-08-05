@@ -58,7 +58,11 @@ bool SceneBase::shouldClose() const
 void SceneBase::initGLFW()
 {
     // Init GLFW
-    glfwInit();
+    if(!glfwInit())
+    {
+        throw std::runtime_error("Failed to initialize GLFW.");
+    }
+
     int major = *(GLSL_VERSION.cend()-3) - '0';
     int minor = *(GLSL_VERSION.cend()-2) - '0';
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);

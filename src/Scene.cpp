@@ -130,5 +130,5 @@ void Scene::loadResource()
 {
 	string filename = "container.jpg";
 	img = imread(filename);
-	cvtColor(img, img, CV_BGR2RGB);
+	cvtColor(img, img, COLOR_BGR2RGB);
 }
