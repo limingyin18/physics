@@ -3,7 +3,7 @@
 using namespace std;
 using namespace Eigen;
 
-const string GLSL_VERSION = "#version 450";
+const string GLSL_VERSION = "#version 330";
 
 SceneBase::SceneBase()
 {
