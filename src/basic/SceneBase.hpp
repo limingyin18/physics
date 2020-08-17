@@ -51,6 +51,6 @@ protected:
     std::pair<float, float> mousePosPrev = {0.0f, 0.0f};
     std::pair<float, float> scrollOffset = {0.0f, 0.0f};
     std::unordered_map<std::string, int> keyMap =
-        {{"alt", 342}, {"F", 70},
+        {{"ctrl", 341}, {"F", 70},
         {"mouseButtonLeft", 0}, {"mouseButtonRight", 1}, {"mouseButtonMiddle", 2}};
 };

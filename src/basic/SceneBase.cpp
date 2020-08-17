@@ -159,7 +159,7 @@ void SceneBase::scroll_callback(GLFWwindow* window, double xoffset, double yoffs
 
 void SceneBase::cameraUpdate()
 {
-    if(keys[keyMap["alt"]])
+    if(keys[keyMap["ctrl"]])
     {
         pair<float, float> mouseOffset{(mousePos.second - mousePosPrev.second)/width, 
             float(mousePos.first - mousePosPrev.first)/height};
