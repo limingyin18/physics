@@ -7,8 +7,8 @@
 #include "basic/SceneBase.hpp"
 #include "basic/MeshBasic.hpp"
 #include "basic/Shader.hpp"
-#include "phyLib/BoxShape.hpp"
-#include "phyLib/ConvexCollision.hpp"
+#include "PiratePhysics/CollisionShapes/BoxShape.hpp"
+#include "PiratePhysics/ConvexCollision.hpp"
 
 class Scene : public SceneBase
 {
@@ -29,7 +29,7 @@ private:
     std::chrono::time_point<std::chrono::system_clock> m_time;
     float dtAll;
 
-    BoxShape box1, box2;
+    PiratePhysics::BoxShape box1, box2;
 
     Eigen::Matrix4f modelCube1, modelCube2;
 

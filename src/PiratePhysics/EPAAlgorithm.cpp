@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace PiratePhysics;
 
 constexpr float EPSILON = 1e-6f;
 
@@ -125,7 +126,7 @@ void silhouette(Entry &entry, unsigned i, Vector3f &w, vector<pair<Entry *, unsi
 }
 
 std::optional<Eigen::Vector3f>
-EPAAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &shape2,
+EPAAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2,
              vector<Vector3f> &simplex)
 {
     // add points to simplex to 4

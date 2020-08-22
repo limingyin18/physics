@@ -1,5 +1,8 @@
 #include <Eigen/Eigen>
+#include "CollisionShapes/CollisionShape.hpp"
 
+namespace PiratePhysics
+{
 /**
  * Creates an orthonormal basis where the x-vector is given
  * and the y-vector is suggested, but can be changed. Both
@@ -13,3 +16,6 @@
  * @return
  */
 void makeOrthonormalBasis(const Eigen::Vector3f &x, Eigen::Vector3f *y, Eigen::Vector3f *z);
+
+void collisionResolution(PiratePhysics::CollisionShape &a, PiratePhysics::CollisionShape&b, Eigen::Vector3f penatration);
+}

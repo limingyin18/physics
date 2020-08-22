@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <optional>
 
-#include "PolyhedralConvexShape.hpp"
+#include "CollisionShapes/CollisionShape.hpp"
 
 
 /** 
@@ -18,8 +18,8 @@
  * @return witness points
  */
 std::optional<Eigen::Vector3f>
-collisionDetection(const PolyhedralConvexShape &shape1, 
-    const PolyhedralConvexShape &shape2);
+collisionDetection(const PiratePhysics::CollisionShape &shape1, 
+    const PiratePhysics::CollisionShape &shape2);
 
 /**
  * EPA algorithm
@@ -30,7 +30,7 @@ collisionDetection(const PolyhedralConvexShape &shape1,
  * @return penatration depth
  */
 std::optional<Eigen::Vector3f>
-EPAAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &shape2, 
+EPAAlgorithm(const PiratePhysics::CollisionShape &shape1, const PiratePhysics::CollisionShape &shape2, 
     std::vector<Eigen::Vector3f> &simplex);
 
 /**
@@ -41,7 +41,7 @@ EPAAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &s
  * @return simplex
  */
 std::optional<std::vector<Eigen::Vector3f>>
-GJKAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &shape2);
+GJKAlgorithm(const PiratePhysics::CollisionShape &shape1, const PiratePhysics::CollisionShape &shape2);
 
 /**
  * Minkowski difference
@@ -53,8 +53,8 @@ GJKAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &s
  * @return support point
  */
 Eigen::Vector3f
-MinkowskiDifferenceSupport(const PolyhedralConvexShape &shape1, 
-    const PolyhedralConvexShape &shape2, const Eigen::Vector3f &dir);
+MinkowskiDifferenceSupport(const PiratePhysics::CollisionShape &shape1, 
+    const PiratePhysics::CollisionShape &shape2, const Eigen::Vector3f &dir);
 
 /**
  * point project to plane given by point and normal

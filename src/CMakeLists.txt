@@ -1,5 +1,5 @@
 add_subdirectory(basic)
-add_subdirectory(phyLib)
+add_subdirectory(PiratePhysics)
 
 file(GLOB SRC "*.hpp" "*.cpp")
 
@@ -11,7 +11,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     opencv_core 
     opencv_imgcodecs
     basic
-    phyLib)
+    PiratePhysics)
 
 add_custom_command(
   TARGET ${CMAKE_PROJECT_NAME}

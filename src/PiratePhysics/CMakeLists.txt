@@ -1,4 +1,4 @@
-project(phyLib)
+project(PiratePhysics)
 
 file(GLOB_RECURSE SRC "*.hpp" "*.cpp")
 

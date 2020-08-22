@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace PiratePhysics;
 
 constexpr float EPSILON = 1e-6f;
 
@@ -144,10 +145,10 @@ bool SimplexOrigin(vector<Vector3f> &s, Vector3f &d)
 }
 
 std::optional<vector<Vector3f>>
-GJKAlgorithm(const PolyhedralConvexShape &shape1, const PolyhedralConvexShape &shape2)
+GJKAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2)
 {
     // center difference as initial direction
-    Vector3f dir = shape1.getCenter() - shape2.getCenter();
+    Vector3f dir = shape1.getOrigin() - shape2.getOrigin();
     if (dir.norm() < 0.001f)
         dir = Vector3f{1.0f, 0.f, 0.f};
     dir.normalize();

@@ -12,7 +12,9 @@ Scene::Scene() : SceneBase(), cube(25)
 	loadResource();
 	initCube();
 
-	box1.m_origin[1] = 15.f;
+	Vector3f origin = box1.getOrigin();
+	origin[1] = 15.f;
+	box1.setOrigin(origin);
 
 	m_time = chrono::system_clock::now();
 	dtAll = 0.f;
@@ -36,7 +38,8 @@ void Scene::update()
 
 void Scene::physicsUpdate(const float dt)
 {
-	box1.m_origin += box1.mVelocity *dt;
+	Vector3f origin = box1.getOrigin()+ box1.getVelocity() *dt;
+	box1.setOrigin(origin);
 
 	auto penatrationDepth = collisionDetection(box1, box2);
 	if(penatrationDepth)
@@ -44,15 +47,16 @@ void Scene::physicsUpdate(const float dt)
 		cout << penatrationDepth.value().normalized() << endl;
 	}
 
-	box1.mVelocity += G*dt;
+	Vector3f velocity = box1.getVelocity() + G*dt;
+	box1.setVelocity(velocity);
 
 	modelCube1.setIdentity();
-	modelCube1.block<3, 3>(0, 0) = box1.m_rot;
-	modelCube1.block<3, 1>(0, 3) = box1.m_origin;
+	modelCube1.block<3, 3>(0, 0) = box1.getRotation();
+	modelCube1.block<3, 1>(0, 3) = box1.getOrigin();
 
 	modelCube2.setIdentity();
-	modelCube2.block<3, 3>(0, 0) = box2.m_rot;
-	modelCube2.block<3, 1>(0, 3) = box2.m_origin;
+	modelCube2.block<3, 3>(0, 0) = box2.getRotation();
+	modelCube2.block<3, 1>(0, 3) = box2.getOrigin();
 }
 
 void Scene::graphicsUpdate(const float dt)

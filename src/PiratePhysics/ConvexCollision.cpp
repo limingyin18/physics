@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace Eigen;
+using namespace PiratePhysics;
 
 constexpr float EPSILON = 1e-6f;
 
@@ -93,8 +94,8 @@ Vector3f pointToPlane(const Vector3f &p,
 }
 
 Vector3f
-MinkowskiDifferenceSupport(const PolyhedralConvexShape &shape1, 
-    const PolyhedralConvexShape &shape2, const Vector3f &dir)
+MinkowskiDifferenceSupport(const CollisionShape &shape1, 
+    const CollisionShape &shape2, const Vector3f &dir)
 {
     Vector3f a = shape1.localGetSupportingVertex(dir);
     Vector3f b = shape2.localGetSupportingVertex(-dir);
@@ -102,8 +103,8 @@ MinkowskiDifferenceSupport(const PolyhedralConvexShape &shape1,
 }
 
 std::optional<Vector3f>
-collisionDetection(const PolyhedralConvexShape &shape1, 
-    const PolyhedralConvexShape &shape2)
+collisionDetection(const CollisionShape &shape1, 
+    const CollisionShape &shape2)
 {
     auto simplex = GJKAlgorithm(shape1, shape2);
     if(simplex)
