@@ -4,6 +4,8 @@ using namespace std;
 using namespace Eigen;
 using namespace PiratePhysics;
 
+namespace PiratePhysics
+{
 constexpr float EPSILON = 1e-6f;
 
 bool Simplex2(vector<Vector3f> &s, Vector3f &d)
@@ -177,4 +179,5 @@ GJKAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2)
     }
 
     return std::nullopt;
+}
 }

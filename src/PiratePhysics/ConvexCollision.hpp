@@ -10,6 +10,8 @@
 #include "CollisionShapes/CollisionShape.hpp"
 
 
+namespace PiratePhysics
+{
 /** 
  * collision detection
  * @param shape1 object a
@@ -100,4 +102,5 @@ bool pointInTriangle(const Eigen::Vector3f &A, const Eigen::Vector3f &B,
  * 
  * @return whether origin in tetrahedron
  */
-bool originInTetrahedron(std::vector<Eigen::Vector3f> &s);
+bool originInTetrahedron(const std::vector<Eigen::Vector3f> &s);
+}

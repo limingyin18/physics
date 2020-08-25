@@ -12,6 +12,16 @@ CollisionShape::CollisionShape(const Vector3f &origin, const Matrix3f &rot, cons
 {
 }
 
+float CollisionShape::getMassInv() const
+{
+	return mMassInv;
+}
+
+Matrix3f CollisionShape::getInertiaInv() const
+{
+	return mInertiaInv;
+}
+
 Eigen::Vector3f CollisionShape::getVelocity() const
 {
 	return mVelocity;

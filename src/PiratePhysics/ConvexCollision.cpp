@@ -4,9 +4,11 @@ using namespace std;
 using namespace Eigen;
 using namespace PiratePhysics;
 
+namespace PiratePhysics
+{
 constexpr float EPSILON = 1e-6f;
 
-bool originInTetrahedron(vector<Vector3f> &s)
+bool originInTetrahedron(const vector<Vector3f> &s)
 {
     Vector3f A = s[3];
     Vector3f B = s[2];
@@ -111,4 +113,5 @@ collisionDetection(const CollisionShape &shape1,
         return EPAAlgorithm(shape1, shape2, simplex.value());
     else
         return std::nullopt;
+}
 }

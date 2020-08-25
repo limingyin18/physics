@@ -5,6 +5,8 @@ using namespace std;
 using namespace Eigen;
 using namespace PiratePhysics;
 
+namespace PiratePhysics
+{
 constexpr float EPSILON = 1e-6f;
 
 /* an triangle info for EPA algorithm */
@@ -133,9 +135,54 @@ EPAAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2,
     switch (simplex.size())
     {
     case 1:
-        break;
+        return std::nullopt;
     case 2:
+    {
+        Vector3f d = simplex[0] - simplex[1];
+        Vector3f x{1.f, 0.f, 0.f}, y{0.f, 1.f, 0.f}, z{0.f, 0.f, 1.f};
+        float xDotD = abs(x.dot(d)), yDotD = abs(y.dot(d)), zDotD = abs(z.dot(d));
+        Vector3f e;
+        if(xDotD < yDotD)
+        {
+            if(xDotD < zDotD)
+            {
+                e = x;
+            }
+            else
+            {
+                e = z;
+            }
+        }
+        else
+        {
+            if(yDotD < zDotD)
+            {
+                e = y;
+            }
+            else
+            {
+                e = z;
+            }
+        }
+        
+        Vector3f v0 = e.cross(d);
+        AngleAxisf rotate{2.f/3.f*M_PI, d};
+        Vector3f v1 = rotate.toRotationMatrix() * v0;
+        Vector3f v2 = rotate.toRotationMatrix() * v1;
+        Vector3f x0 = MinkowskiDifferenceSupport(shape1, shape2, v0);
+        Vector3f x1 = MinkowskiDifferenceSupport(shape1, shape2, v1);
+        Vector3f x2 = MinkowskiDifferenceSupport(shape1, shape2, v2);
+
+        if(originInTetrahedron(vector<Vector3f>{simplex[1], x0, x1, x2}))
+        {
+            simplex = {simplex[1], x0, x1, x2};
+        }
+        else
+        {
+            simplex = {simplex[0], x0, x1, x2};
+        }
         break;
+    }
     case 3:
     {
         vector<Vector3f> temp{simplex};
@@ -243,4 +290,5 @@ EPAAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2,
         }
     }
     return entry->v;
+}
 }

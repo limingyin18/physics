@@ -9,6 +9,7 @@
 #include "basic/Shader.hpp"
 #include "PiratePhysics/CollisionShapes/BoxShape.hpp"
 #include "PiratePhysics/ConvexCollision.hpp"
+#include "PiratePhysics/CollisionResolution.hpp"
 
 class Scene : public SceneBase
 {

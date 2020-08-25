@@ -4,6 +4,7 @@
 using namespace std;
 using namespace Eigen;
 using namespace cv;
+using namespace PiratePhysics;
 
 const Vector3f G{0.f, -9.8f, 0.f};
 
@@ -30,6 +31,7 @@ void Scene::update()
 	std::chrono::duration<float> elapsed = timeNow - m_time;
 	m_time = timeNow;
 	float dt = elapsed.count();
+	dt = 0.01f;
 	dtAll += dt;
 
 	physicsUpdate(dt);
@@ -38,13 +40,24 @@ void Scene::update()
 
 void Scene::physicsUpdate(const float dt)
 {
-	Vector3f origin = box1.getOrigin()+ box1.getVelocity() *dt;
+	Vector3f origin = box1.getOrigin() + box1.getVelocity() *dt;
 	box1.setOrigin(origin);
+
+	Vector3f rotation = box1.getOmega() * dt;
+	Matrix3f rotationMatrix;
+    rotationMatrix = AngleAxisf(rotation[0], Vector3f::UnitX())
+                        * AngleAxisf(rotation[1],  Vector3f::UnitY())
+                        * AngleAxisf(rotation[2], Vector3f::UnitZ());
+    Matrix3f rotationChange = box1.getRotation() * rotationMatrix;
+	box1.setRotation(rotationChange);
+
 
 	auto penatrationDepth = collisionDetection(box1, box2);
 	if(penatrationDepth)
 	{
-		cout << penatrationDepth.value().normalized() << endl;
+		Vector3f tt = penatrationDepth.value();
+		collisionResolution(box1, box2, tt);
+		cout << penatrationDepth.value() << endl;
 	}
 
 	Vector3f velocity = box1.getVelocity() + G*dt;

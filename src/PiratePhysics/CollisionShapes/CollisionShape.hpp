@@ -32,6 +32,9 @@ public:
     Eigen::Vector3f localGetSupportingVertex(Eigen::Vector3f dir) const;
 
 
+	float getMassInv() const;
+	Eigen::Matrix3f getInertiaInv() const;
+
 	Eigen::Vector3f getVelocity() const;
 	void setVelocity(Eigen::Vector3f &);
 
