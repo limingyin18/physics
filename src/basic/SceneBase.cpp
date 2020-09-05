@@ -168,7 +168,7 @@ void SceneBase::cameraUpdate()
         {
             camera.rotation[0] += cameraRotateSpeed * mouseOffset.first;
             camera.rotation[1] += cameraRotateSpeed * mouseOffset.second;
-            camera.rotation[0] = clamp(camera.rotation[0], -pi/2.0f, pi/2.0f);
+            camera.rotation[0] = clamp(camera.rotation[0], -float(M_PI)/2.0f, float(M_PI)/2.0f);
         }
 
         if(keys[keyMap["mouseButtonMiddle"]])

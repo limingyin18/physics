@@ -10,6 +10,8 @@
 #include "PiratePhysics/CollisionShapes/BoxShape.hpp"
 #include "PiratePhysics/ConvexCollision.hpp"
 #include "PiratePhysics/CollisionResolution.hpp"
+#include "PiratePhysics/PositionBasedDynamics.hpp"
+#include "PiratePhysics/Constraint.hpp"
 
 class Scene : public SceneBase
 {
@@ -24,6 +26,7 @@ public:
 
 private:
     void initCube();
+    void initPhysics();
     void loadResource();
 
 private:
@@ -31,6 +34,8 @@ private:
     float dtAll;
 
     PiratePhysics::BoxShape box1, box2;
+
+    PiratePhysics::PositionBasedDynamics mPBD;
 
     Eigen::Matrix4f modelCube1, modelCube2;
 

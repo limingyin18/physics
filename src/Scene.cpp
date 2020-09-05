@@ -12,9 +12,10 @@ Scene::Scene() : SceneBase(), cube(25)
 {
 	loadResource();
 	initCube();
+	initPhysics();
 
 	Vector3f origin = box1.getOrigin();
-	origin[1] = 15.f;
+	origin[0] = 10.f;
 	box1.setOrigin(origin);
 
 	m_time = chrono::system_clock::now();
@@ -40,36 +41,26 @@ void Scene::update()
 
 void Scene::physicsUpdate(const float dt)
 {
-	Vector3f origin = box1.getOrigin() + box1.getVelocity() *dt;
-	box1.setOrigin(origin);
-
-	Vector3f rotation = box1.getOmega() * dt;
-	Matrix3f rotationMatrix;
-    rotationMatrix = AngleAxisf(rotation[0], Vector3f::UnitX())
-                        * AngleAxisf(rotation[1],  Vector3f::UnitY())
-                        * AngleAxisf(rotation[2], Vector3f::UnitZ());
-    Matrix3f rotationChange = box1.getRotation() * rotationMatrix;
-	box1.setRotation(rotationChange);
-
-
-	auto penatrationDepth = collisionDetection(box1, box2);
-	if(penatrationDepth)
+	mPBD.dt = dt;
+	for(auto &rb:mPBD.mRigiBodies)
 	{
-		Vector3f tt = penatrationDepth.value();
-		collisionResolution(box1, box2, tt);
-		cout << penatrationDepth.value() << endl;
+		rb.mVelocity[1] += -dt*rb.mInvMass*10.f;
+		rb.mBaryCenter += dt*rb.mVelocity;
 	}
 
-	Vector3f velocity = box1.getVelocity() + G*dt;
-	box1.setVelocity(velocity);
+	for(auto &c:mPBD.mConstraints)
+	{
+		c->solveConstraint();
+	}
 
+	// set geometry
 	modelCube1.setIdentity();
 	modelCube1.block<3, 3>(0, 0) = box1.getRotation();
-	modelCube1.block<3, 1>(0, 3) = box1.getOrigin();
+	modelCube1.block<3, 1>(0, 3) = mPBD.mRigiBodies[0].mBaryCenter;
 
 	modelCube2.setIdentity();
 	modelCube2.block<3, 3>(0, 0) = box2.getRotation();
-	modelCube2.block<3, 1>(0, 3) = box2.getOrigin();
+	modelCube2.block<3, 1>(0, 3) = mPBD.mRigiBodies[1].mBaryCenter;
 }
 
 void Scene::graphicsUpdate(const float dt)
@@ -141,6 +132,20 @@ void Scene::initCube()
 	shaderCube.addUniform("view");
 	shaderCube.addUniform("model");
 	shaderCube.addUniform("textureSampler");
+}
+
+void Scene::initPhysics()
+{
+	mPBD.mRigiBodies.emplace_back(1.0f);
+	mPBD.mRigiBodies.emplace_back(1.0f);
+	mPBD.mRigiBodies[0].mInvMass = 0.f;
+
+	mPBD.mRigiBodies[0].mBaryCenter = Vector3f(0.f, 0.f, 0.f);
+	mPBD.mRigiBodies[0].mVelocity = Vector3f(0.f, 0.f, 0.f);
+	mPBD.mRigiBodies[1].mBaryCenter = Vector3f(10.f, 0.f, 0.f);
+	mPBD.mRigiBodies[1].mVelocity = Vector3f(0.f, 0.f, 0.f);
+
+	mPBD.mConstraints.emplace_back(std::make_shared<Stretching>(mPBD, 0, 1, 10.f));
 }
 
 void Scene::loadResource()
