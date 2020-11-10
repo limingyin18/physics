@@ -166,7 +166,7 @@ EPAAlgorithm(const CollisionShape &shape1, const CollisionShape &shape2,
         }
         
         Vector3f v0 = e.cross(d);
-        AngleAxisf rotate{2.f/3.f*M_PI, d};
+        AngleAxisf rotate{2.f/3.f*3.14f, d};
         Vector3f v1 = rotate.toRotationMatrix() * v0;
         Vector3f v2 = rotate.toRotationMatrix() * v1;
         Vector3f x0 = MinkowskiDifferenceSupport(shape1, shape2, v0);
