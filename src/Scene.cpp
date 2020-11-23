@@ -5,12 +5,14 @@ using namespace std;
 using namespace Eigen;
 using namespace cv;
 using namespace PiratePhysics;
+using namespace BasicGL;
 
 const Vector3f G{0.f, -9.8f, 0.f};
 
 Scene::Scene() : SceneBase(), cube(25)
 {
 	loadResource();
+	loadModel();
 	initCube();
 	initPhysics();
 
@@ -81,6 +83,8 @@ void Scene::graphicsUpdate(const float dt)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 	glUseProgram(0);
+
+	renderDragon.draw();
 }
 
 void Scene::initCube()
@@ -153,4 +157,31 @@ void Scene::loadResource()
 	string filename = "container.jpg";
 	img = imread(filename);
 	cvtColor(img, img, COLOR_BGR2RGB);
+}
+
+void Scene::loadModel()
+{
+	string filename = "teapot.obj";
+	vector<Loader::Vec3f> x;
+	vector<MeshFaceIndices> faces;
+	vector<Loader::Vec3f> normals;
+    vector<Loader::Vec2f> texcoords;
+	Loader::Vec3f scale{1.f, 1.f, 1.f};
+	Loader::loadObj(filename, &x, &faces, &normals, &texcoords, scale);
+
+	dragon.data.resize(x.size());
+	auto f = [&x, &normals, &texcoords](unsigned i, MeshBase::Vertex&d){
+		 d =MeshBase::Vertex(Eigen::Vector3f{x[i][0], x[i][1], x[i][2]});};
+ 	dragon.setVertices(f);
+	dragon.recomputeNormals(dragon.data);
+	dragon.indices.reserve(3*faces.size());
+	for(auto &v:faces)
+	{
+		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[0]));
+		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[1]));
+		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[2]));
+	}
+
+	renderDragon.setMesh(&dragon);
+	renderDragon.setCamera(&camera);
 }

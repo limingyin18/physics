@@ -4,17 +4,22 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 
-class PlaneRender
+class MeshBasicRender
 {
 public:
-    PlaneRender(Plane& p, Eigen::Matrix4f& model, Camera& cam);
+    MeshBasicRender() = default;
+    MeshBasicRender(MeshBase*, Eigen::Matrix4f&, Camera*);
     void draw();
+    void setMesh(MeshBase*);
+    void resetVAO();
+    void setPose(Eigen::Matrix4f& m){model=m;};
+    void setCamera(Camera* cam){camera = cam;};
 
 private:
     GLuint ebo, vbo, vao;
     Shader render;
 
-    Camera& camera;
-    Eigen::Matrix4f& model;
-    Plane& plane;
+    const Camera* camera;
+    Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
+    const MeshBase* meshBase;
 };

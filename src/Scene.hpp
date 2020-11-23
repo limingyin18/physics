@@ -7,6 +7,8 @@
 #include "basic/SceneBase.hpp"
 #include "basic/MeshBasic.hpp"
 #include "basic/Shader.hpp"
+#include "basic/Loader.hpp"
+#include "basic/MeshBasicRender.hpp"
 #include "PiratePhysics/CollisionShapes/BoxShape.hpp"
 #include "PiratePhysics/ConvexCollision.hpp"
 #include "PiratePhysics/CollisionResolution.hpp"
@@ -28,6 +30,7 @@ private:
     void initCube();
     void initPhysics();
     void loadResource();
+    void loadModel();
 
 private:
     std::chrono::time_point<std::chrono::system_clock> m_time;
@@ -45,4 +48,7 @@ private:
     unsigned texCube;
 
     cv::Mat img;
+
+    MeshBase dragon;
+    MeshBasicRender renderDragon;
 };
