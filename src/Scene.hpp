@@ -36,19 +36,15 @@ private:
     std::chrono::time_point<std::chrono::system_clock> m_time;
     float dtAll;
 
-    PiratePhysics::BoxShape box1, box2;
-
-    PiratePhysics::PositionBasedDynamics mPBD;
-
     Eigen::Matrix4f modelCube1, modelCube2;
 
-    Cube cube;
-    Shader shaderCube;
-    unsigned eboCube, vboCube, vaoCube;
-    unsigned texCube;
+    PiratePhysics::BoxShape box1, box2;
+    PiratePhysics::PositionBasedDynamics mPBD;
 
+    Cube cube;
+    SolidRender renderCube;
     cv::Mat img;
 
     MeshBase dragon;
-    MeshBasicRender renderDragon;
+    CeramicRender renderDragon;
 };

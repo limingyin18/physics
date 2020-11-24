@@ -8,5 +8,5 @@ uniform sampler2D textureSampler;
 
 void main()
 {
-   colorFragOut = 0.000001f*colorFragIn + texture(textureSampler, texFragIn);
+   colorFragOut = 0.01f * colorFragIn + texture(textureSampler, texFragIn);
 }
