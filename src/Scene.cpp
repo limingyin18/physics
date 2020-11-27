@@ -129,7 +129,6 @@ void Scene::loadModel()
 		 d =MeshBase::Vertex(Eigen::Vector3f{x[i][0], x[i][1], x[i][2]});
 		 d.color = Eigen::Vector3f{1.0f, 1.0f, 1.0f};};
  	teapot.setVertices(f);
-	teapot.recomputeNormals(teapot.data);
 	teapot.indices.reserve(3*faces.size());
 	teapot.indices.clear();
 	for(auto &v:faces)
@@ -138,6 +137,7 @@ void Scene::loadModel()
 		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[1] - 1));
 		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[2] - 1));
 	}
+	teapot.recomputeNormals(teapot.data);
 
 	renderTeapot.setMesh(&teapot);
 	renderTeapot.setCamera(&camera);

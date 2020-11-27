@@ -140,6 +140,7 @@ void PhongRender::setShader()
 	render.addUniform("model");
 	render.addUniform("lightColor");
 	render.addUniform("lightPos");
+	render.addUniform("viewPos");
 }
 
 void PhongRender::bindShader()
@@ -153,5 +154,6 @@ void PhongRender::bindShader()
 	Vector3f lightPos{5.f, 5.f, 0.f};
 	glUniform3fv(render.uniforms.at("lightColor"), 1, lightColor.data());
 	glUniform3fv(render.uniforms.at("lightPos"), 1, lightPos.data());
+	glUniform3fv(render.uniforms.at("viewPos"), 1, camera->getCameraPos().data());
 	glBindVertexArray(vao);
 }
