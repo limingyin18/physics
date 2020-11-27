@@ -26,13 +26,13 @@ namespace BasicGL
                                 std::vector<MeshFaceIndices> *faces, std::vector<Vec3f> *normals,
                                 std::vector<Vec2f> *texcoords, const Vec3f &scale)
     {
-        clog << "Loading " << filename;
+        clog << "Loading " << filename << endl;
 
         std::ifstream filestream;
         filestream.open(filename.c_str());
         if (filestream.fail())
         {
-            cerr << "Failed to open file: " << filename;
+            cerr << "Failed to open file: " << filename << endl;
             return;
         }
 

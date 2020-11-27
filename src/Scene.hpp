@@ -41,10 +41,14 @@ private:
     PiratePhysics::BoxShape box1, box2;
     PiratePhysics::PositionBasedDynamics mPBD;
 
+    Cube light;
+    MeshBasicRender renderLight;
+    Eigen::Matrix4f modelLight;
+
     Cube cube;
     SolidRender renderCube;
     cv::Mat img;
 
-    MeshBase dragon;
-    CeramicRender renderDragon;
+    MeshBase teapot;
+    PhongRender renderTeapot;
 };

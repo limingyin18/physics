@@ -15,14 +15,20 @@ public:
     MeshBasicRender(MeshBase*, Eigen::Matrix4f&, Camera*);
     virtual ~MeshBasicRender() = default;
     virtual void draw();
-    virtual void setVAO() = 0;
-    virtual void setShader() = 0;
+
+
     void setMesh(MeshBase*);
     void setTexImg(int, int, unsigned char*);
     void setPose(Eigen::Matrix4f& m){model=m;};
     void setCamera(Camera* cam){camera = cam;};
 
 protected:
+    virtual void setShader();
+    virtual void setVAO();
+    virtual void bindShader();
+    virtual void _draw();
+    virtual void unBindShader();
+
     GLuint ebo, vbo, vao;
     GLuint tex;
     Shader render;
@@ -42,9 +48,10 @@ public:
     SolidRender() = default;
     virtual ~SolidRender() = default;
 
-    void setVAO() override;
+protected:
     void setShader() override;
-    void draw() override;
+    void bindShader() override;
+    void unBindShader() override;
 };
 
 /**
@@ -57,8 +64,21 @@ public:
     CeramicRender() = default;
     virtual ~CeramicRender() = default;
 
-    void setVAO() override;
+protected:
     void setShader() override;
+};
 
-    void draw() override;
+/**
+ * @brief phong render
+ * 
+ */
+class PhongRender : public MeshBasicRender
+{
+public:
+    PhongRender() = default;
+    virtual ~PhongRender() = default;
+
+protected:
+    void setShader() override;
+    void bindShader() override;
 };

@@ -85,7 +85,7 @@ bool Shader::addUniform(const std::string uniformName)
     int loc = glGetUniformLocation(Program, uniformName.c_str());
     if(loc==-1)
     {
-        throw runtime_error(uniformName + "is not an active uniform name");
+        throw runtime_error(uniformName + " is not an active uniform name");
     }
     else
     {

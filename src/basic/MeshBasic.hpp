@@ -13,12 +13,12 @@ public:
         Eigen::Vector3f position;
         Eigen::Vector3f normal;
         Eigen::Vector2f tex;
-        Eigen::Vector4f color;
+        Eigen::Vector3f color;
 
         explicit Vertex(Eigen::Vector3f p = {0.0f, 0.0f, 0.0f},
                             Eigen::Vector3f n = {0.0f, 0.0f, 0.0f},
                             Eigen::Vector2f t = {0.f, 0.f},
-                            Eigen::Vector4f c = {1.0f, 1.0f, 1.0f, 1.0f}) :
+                            Eigen::Vector3f c = {1.0f, 1.0f, 1.0f}) :
                             position{p}, normal{n}, color{c}, tex{t} {};
     };
 

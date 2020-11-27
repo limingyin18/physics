@@ -10,7 +10,7 @@ using namespace BasicGL;
 const Vector3f G{0.f, -9.8f, 0.f};
 string TeapotFileName = "teapot.obj";
 
-Scene::Scene() : SceneBase(), cube(25)
+Scene::Scene() : SceneBase(), cube(25), light(25)
 {
 	loadResource();
 	loadModel();
@@ -68,17 +68,27 @@ void Scene::physicsUpdate(const float dt)
 
 void Scene::graphicsUpdate(const float dt)
 {
-	renderDragon.draw();
+	renderTeapot.draw();
 
 	renderCube.setPose(modelCube1);
 	renderCube.draw();
 
 	renderCube.setPose(modelCube2);
 	renderCube.draw();
+
+	renderLight.setPose(modelLight);
+	renderLight.draw();
 }
 
 void Scene::initCube()
 {
+ 	light.setVertices([](unsigned i, MeshBase::Vertex&d){d.position *= 0.5f;});
+
+	modelLight.setIdentity();
+	modelLight.block<3, 1>(0, 3) = Vector3f{5.f, 5.f, 0.f};
+	renderLight.setMesh(&light);
+	renderLight.setCamera(&camera);
+
 	renderCube.setMesh(&cube);
 	renderCube.setCamera(&camera);
 	renderCube.setTexImg(img.cols, img.rows, img.data);
@@ -114,21 +124,21 @@ void Scene::loadModel()
 	Loader::Vec3f scale{1.f, 1.f, 1.f};
 	Loader::loadObj(TeapotFileName, &x, &faces, &normals, &texcoords, scale);
 
-	dragon.data.resize(x.size());
+	teapot.data.resize(x.size());
 	auto f = [&x, &normals, &texcoords](unsigned i, MeshBase::Vertex&d){
 		 d =MeshBase::Vertex(Eigen::Vector3f{x[i][0], x[i][1], x[i][2]});
-		 d.color = Eigen::Vector4f{1.0f, 1.0f, 1.0f, 1.0f};};
- 	dragon.setVertices(f);
-	dragon.recomputeNormals(dragon.data);
-	dragon.indices.reserve(3*faces.size());
-	dragon.indices.clear();
+		 d.color = Eigen::Vector3f{1.0f, 1.0f, 1.0f};};
+ 	teapot.setVertices(f);
+	teapot.recomputeNormals(teapot.data);
+	teapot.indices.reserve(3*faces.size());
+	teapot.indices.clear();
 	for(auto &v:faces)
 	{
-		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[0] - 1));
-		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[1] - 1));
-		dragon.indices.push_back(static_cast<unsigned>(v.posIndices[2] - 1));
+		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[0] - 1));
+		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[1] - 1));
+		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[2] - 1));
 	}
 
-	renderDragon.setMesh(&dragon);
-	renderDragon.setCamera(&camera);
+	renderTeapot.setMesh(&teapot);
+	renderTeapot.setCamera(&camera);
 }

@@ -58,7 +58,7 @@ Plane::Plane(unsigned nx, unsigned nz)
                               Vector3f{0.0f, 1.0f, 0.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(nx), 
                                         static_cast<float>(j) / static_cast<float>(nz)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -94,7 +94,7 @@ Cube::Cube(int n)
                               Vector3f{0.0f, -1.0f, 0.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -107,7 +107,7 @@ Cube::Cube(int n)
                               Vector3f{0.0f, 1.0f, 0.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -120,7 +120,7 @@ Cube::Cube(int n)
                               Vector3f{0.0f, 0.0f, 1.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -133,7 +133,7 @@ Cube::Cube(int n)
                               Vector3f{0.0f, 0.0f, -1.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -146,7 +146,7 @@ Cube::Cube(int n)
                               Vector3f{-1.0f, 0.0f, 0.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
@@ -159,7 +159,7 @@ Cube::Cube(int n)
                               Vector3f{1.0f, 0.0f, 0.0f},
                               Vector2f{static_cast<float>(i) / static_cast<float>(n), 
                                         static_cast<float>(j) / static_cast<float>(n)},
-                              Vector4f{1.0f, 1.0f, 1.0f, 1.0f});
+                              Vector3f{1.0f, 1.0f, 1.0f});
         }
     }
 
