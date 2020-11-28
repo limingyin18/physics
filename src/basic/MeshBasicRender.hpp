@@ -22,9 +22,43 @@ public:
     void setPose(Eigen::Matrix4f& m){model=m;};
     void setCamera(Camera* cam){camera = cam;};
 
+    /**
+     * @brief material's ambient diffuse specular and shiness cofficient
+     * 
+     */
+    struct Material
+    {
+        Material() = default;
+        Material(const Material&) = default;
+        Material& operator=(const Material&) = default;
+        Eigen::Vector3f ambient = {1.f, 1.f, 1.f};
+        Eigen::Vector3f diffuse = {1.f, 1.f, 1.f};
+        Eigen::Vector3f specular = {1.f, 1.f, 1.f};
+        float shininess = 1.0f;
+    };
+
 protected:
-    virtual void setShader();
+    /**
+     * @brief add shader files and link
+     * 
+     */
+    virtual void addShader();
+
+    /**
+     * @brief link shader
+     * 
+     */
+    virtual void linkShader();
+
+    /**
+     * @brief add uniforms: mvp matrixs
+     * 
+     */
+    virtual void addUniforms();
+
     virtual void setVAO();
+
+    // draw
     virtual void bindShader();
     virtual void _draw();
     virtual void unBindShader();
@@ -49,7 +83,8 @@ public:
     virtual ~SolidRender() = default;
 
 protected:
-    void setShader() override;
+    void addShader() override;
+    void addUniforms() override;
     void bindShader() override;
     void unBindShader() override;
 };
@@ -65,7 +100,7 @@ public:
     virtual ~CeramicRender() = default;
 
 protected:
-    void setShader() override;
+    void addShader() override;
 };
 
 /**
@@ -78,7 +113,16 @@ public:
     PhongRender() = default;
     virtual ~PhongRender() = default;
 
+    void setColorLight(const Eigen::Vector3f &color) {lightColor = color;};
+    void setPosLight(const Eigen::Vector3f &pos) {lightPos = pos;};
+    void setMaterial(const Material &m){material = m;};
+
 protected:
-    void setShader() override;
+    void addShader() override;
+    void addUniforms() override;
     void bindShader() override;
+
+	Eigen::Vector3f lightColor = {1.f, 1.f, 1.f};
+	Eigen::Vector3f lightPos = {0.f, 0.f, 0.f};
+    Material material;
 };

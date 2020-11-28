@@ -18,7 +18,9 @@ void MeshBasicRender::setMesh(MeshBase* m)
 {
 	meshBase = m;
 	setVAO();
-	setShader();
+	addShader();
+	linkShader();
+	addUniforms();
 }
 
 void MeshBasicRender::setTexImg(int w, int h, unsigned char* data)
@@ -67,10 +69,10 @@ void MeshBasicRender::setVAO()
 void MeshBasicRender::bindShader()
 {
 	glUseProgram(render.Program);
+	glBindVertexArray(vao);
 	glUniformMatrix4fv(render.uniforms.at("projection"), 1, GL_FALSE, camera->projection.data());
 	glUniformMatrix4fv(render.uniforms.at("view"), 1, GL_FALSE, camera->view.data());
 	glUniformMatrix4fv(render.uniforms.at("model"), 1, GL_FALSE, model.data());
-	glBindVertexArray(vao);
 }
 
 void MeshBasicRender::unBindShader()
@@ -79,81 +81,81 @@ void MeshBasicRender::unBindShader()
 	glUseProgram(0);
 }
 
-void MeshBasicRender::setShader()
+void MeshBasicRender::addShader()
 {
     render.addShader("basic.vert", GL_VERTEX_SHADER);
     render.addShader("basic.frag", GL_FRAGMENT_SHADER);
-    render.link();
+}
+
+void MeshBasicRender::linkShader()
+{
+	render.link();
+}
+
+void MeshBasicRender::addUniforms()
+{
 	render.addUniform("projection");
 	render.addUniform("view");
 	render.addUniform("model");
 }
 
-void SolidRender::setShader()
+void SolidRender::addShader()
 {
     render.addShader("Solid.vert", GL_VERTEX_SHADER);
     render.addShader("Solid.frag", GL_FRAGMENT_SHADER);
-    render.link();
-	render.addUniform("projection");
-	render.addUniform("view");
-	render.addUniform("model");
+}
+
+void SolidRender::addUniforms()
+{
+	MeshBasicRender::addUniforms();
 	render.addUniform("textureSampler");
 }
 
 void SolidRender::bindShader()
 {
-	glUseProgram(render.Program);
-
-	glUniformMatrix4fv(render.uniforms.at("projection"), 1, GL_FALSE, camera->projection.data());
-	glUniformMatrix4fv(render.uniforms.at("view"), 1, GL_FALSE, camera->view.data());
-	glUniformMatrix4fv(render.uniforms.at("model"), 1, GL_FALSE, model.data());
-	glBindVertexArray(vao);
-
+	MeshBasicRender::bindShader();
 	glBindTexture(GL_TEXTURE_2D, tex);
 }
 
 void SolidRender::unBindShader()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-	glUseProgram(0);
-
+	MeshBasicRender::unBindShader();
 }
 
-void CeramicRender::setShader()
+void CeramicRender::addShader()
 {
     render.addShader("ceramic.vert", GL_VERTEX_SHADER);
     render.addShader("ceramic.frag", GL_FRAGMENT_SHADER);
-    render.link();
-	render.addUniform("projection");
-	render.addUniform("view");
-	render.addUniform("model");
 }
 
-void PhongRender::setShader()
+void PhongRender::addShader()
 {
 	render.addShader("phong.vert", GL_VERTEX_SHADER);
     render.addShader("phong.frag", GL_FRAGMENT_SHADER);
-    render.link();
-	render.addUniform("projection");
-	render.addUniform("view");
-	render.addUniform("model");
+}
+
+void PhongRender::addUniforms()
+{
+	MeshBasicRender::addUniforms();
 	render.addUniform("lightColor");
 	render.addUniform("lightPos");
 	render.addUniform("viewPos");
+	render.addUniform("material.ambient");
+	render.addUniform("material.diffuse");
+	render.addUniform("material.specular");
+	render.addUniform("material.shininess");
 }
 
 void PhongRender::bindShader()
 {
-	glUseProgram(render.Program);
-
-	glUniformMatrix4fv(render.uniforms.at("projection"), 1, GL_FALSE, camera->projection.data());
-	glUniformMatrix4fv(render.uniforms.at("view"), 1, GL_FALSE, camera->view.data());
-	glUniformMatrix4fv(render.uniforms.at("model"), 1, GL_FALSE, model.data());
-	Vector3f lightColor{0.5f, 0.5f, 0.5f};
-	Vector3f lightPos{5.f, 5.f, 0.f};
+	MeshBasicRender::bindShader();
 	glUniform3fv(render.uniforms.at("lightColor"), 1, lightColor.data());
 	glUniform3fv(render.uniforms.at("lightPos"), 1, lightPos.data());
 	glUniform3fv(render.uniforms.at("viewPos"), 1, camera->getCameraPos().data());
-	glBindVertexArray(vao);
+
+	glUniform3fv(render.uniforms.at("material.ambient"), 1, material.ambient.data());
+	glUniform3fv(render.uniforms.at("material.diffuse"), 1, material.diffuse.data());
+	glUniform3fv(render.uniforms.at("material.specular"), 1, material.specular.data());
+	glUniform1fv(render.uniforms.at("material.shininess"), 1, &material.shininess);
 }
