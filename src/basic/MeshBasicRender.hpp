@@ -37,6 +37,21 @@ public:
         float shininess = 1.0f;
     };
 
+    /**
+     * @brief light's position, ambient, diffuse, specular
+     * 
+     */
+    struct Light
+    {
+        Light() = default;
+        Light(const Light&) = default;
+        Light& operator=(const Light&) = default;
+        Eigen::Vector3f position = {0.f, 0.f, 0.f};
+        Eigen::Vector3f ambient = {1.f, 1.f, 1.f};
+        Eigen::Vector3f diffuse = {1.f, 1.f, 1.f};
+        Eigen::Vector3f specular = {1.f, 1.f, 1.f};
+    };
+
 protected:
     /**
      * @brief add shader files and link
@@ -113,16 +128,14 @@ public:
     PhongRender() = default;
     virtual ~PhongRender() = default;
 
-    void setColorLight(const Eigen::Vector3f &color) {lightColor = color;};
-    void setPosLight(const Eigen::Vector3f &pos) {lightPos = pos;};
     void setMaterial(const Material &m){material = m;};
+    void setLight(const Light &l){light = l;};
 
 protected:
     void addShader() override;
     void addUniforms() override;
     void bindShader() override;
 
-	Eigen::Vector3f lightColor = {1.f, 1.f, 1.f};
-	Eigen::Vector3f lightPos = {0.f, 0.f, 0.f};
     Material material;
+    Light light;
 };

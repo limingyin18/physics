@@ -8,7 +8,9 @@ using namespace PiratePhysics;
 using namespace BasicGL;
 
 const Vector3f G{0.f, -9.8f, 0.f};
-const Vector3f LIGHT_COLOR{1.0f, 1.0f, 1.0f};
+const Vector3f LIGHT_AMBIENT = {0.2f, 0.2f, 0.2f};
+const Vector3f LIGHT_DIFFUSE = {0.5f, 0.5f, 0.5f};
+const Vector3f LIGHT_SPECULAR = {1.f, 1.0f, 1.0f};
 const Vector3f LIGHT_POSITION{5.0f, 5.0f, 0.0f};
 string TeapotFileName = "teapot.obj";
 
@@ -84,7 +86,7 @@ void Scene::graphicsUpdate(const float dt)
 
 void Scene::initCube()
 {
- 	light.setVertices([](unsigned i, MeshBase::Vertex&d){d.position *= 0.5f;d.color = LIGHT_COLOR;});
+ 	light.setVertices([](unsigned i, MeshBase::Vertex&d){d.position *= 0.5f;d.color = LIGHT_SPECULAR;});
 
 	modelLight.setIdentity();
 	modelLight.block<3, 1>(0, 3) = LIGHT_POSITION;
@@ -142,13 +144,17 @@ void Scene::loadModel()
 	teapot.recomputeNormals(teapot.data);
 
 	MeshBasicRender::Material materialTeapot;
-	materialTeapot.ambient = {0.3f, 0.3f, 0.3f};
-	materialTeapot.diffuse = {0.3f, 0.3f, 0.3f};
-	materialTeapot.specular = {0.3f, 0.3f, 0.3f};
+	materialTeapot.ambient = {1.0f, 0.5f, 0.3f};
+	materialTeapot.diffuse = {1.0f, 0.5f, 0.3f};
+	materialTeapot.specular = {0.5f, 0.5f, 0.5f};
 	materialTeapot.shininess = 32.0f;
 	renderTeapot.setMaterial(materialTeapot);
 	renderTeapot.setMesh(&teapot);
-	renderTeapot.setPosLight(LIGHT_POSITION);
-	renderTeapot.setColorLight(LIGHT_COLOR);
+	MeshBasicRender::Light light;
+	light.position = LIGHT_POSITION;
+	light.ambient = LIGHT_AMBIENT;
+	light.diffuse = LIGHT_DIFFUSE;
+	light.specular = LIGHT_SPECULAR;
+	renderTeapot.setLight(light);
 	renderTeapot.setCamera(&camera);
 }

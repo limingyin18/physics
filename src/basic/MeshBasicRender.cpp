@@ -138,21 +138,28 @@ void PhongRender::addShader()
 void PhongRender::addUniforms()
 {
 	MeshBasicRender::addUniforms();
-	render.addUniform("lightColor");
-	render.addUniform("lightPos");
 	render.addUniform("viewPos");
+
 	render.addUniform("material.ambient");
 	render.addUniform("material.diffuse");
 	render.addUniform("material.specular");
 	render.addUniform("material.shininess");
+
+	render.addUniform("light.position");
+	render.addUniform("light.ambient");
+	render.addUniform("light.diffuse");
+	render.addUniform("light.specular");
 }
 
 void PhongRender::bindShader()
 {
 	MeshBasicRender::bindShader();
-	glUniform3fv(render.uniforms.at("lightColor"), 1, lightColor.data());
-	glUniform3fv(render.uniforms.at("lightPos"), 1, lightPos.data());
 	glUniform3fv(render.uniforms.at("viewPos"), 1, camera->getCameraPos().data());
+
+	glUniform3fv(render.uniforms.at("light.position"), 1, light.position.data());
+	glUniform3fv(render.uniforms.at("light.ambient"), 1, light.ambient.data());
+	glUniform3fv(render.uniforms.at("light.diffuse"), 1, light.diffuse.data());
+	glUniform3fv(render.uniforms.at("light.specular"), 1, light.specular.data());
 
 	glUniform3fv(render.uniforms.at("material.ambient"), 1, material.ambient.data());
 	glUniform3fv(render.uniforms.at("material.diffuse"), 1, material.diffuse.data());
