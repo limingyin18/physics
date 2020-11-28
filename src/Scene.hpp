@@ -27,23 +27,25 @@ public:
     void graphicsUpdate(const float dt);
 
 private:
+    void initLight();
     void initCube();
+    void initTeapot();
+
     void initPhysics();
-    void loadResource();
-    void loadModel();
 
 private:
-    std::chrono::time_point<std::chrono::system_clock> m_time;
-    float dtAll;
+    std::chrono::time_point<std::chrono::system_clock> m_time = 
+        std::chrono::system_clock::now();
+    float dtAll = 0.0f;
+
+    Cube light;
+    MeshBasicRender renderLight;
+    Eigen::Matrix4f modelLight;
 
     Eigen::Matrix4f modelCube1, modelCube2;
 
     PiratePhysics::BoxShape box1, box2;
     PiratePhysics::PositionBasedDynamics mPBD;
-
-    Cube light;
-    MeshBasicRender renderLight;
-    Eigen::Matrix4f modelLight;
 
     Cube cube;
     SolidRender renderCube;

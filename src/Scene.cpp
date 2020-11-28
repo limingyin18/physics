@@ -16,17 +16,11 @@ string TeapotFileName = "teapot.obj";
 
 Scene::Scene() : SceneBase(), cube(25), light(25)
 {
-	loadResource();
-	loadModel();
+	initTeapot();
 	initCube();
+	initLight();
+
 	initPhysics();
-
-	Vector3f origin = box1.getOrigin();
-	origin[0] = 10.f;
-	box1.setOrigin(origin);
-
-	m_time = chrono::system_clock::now();
-	dtAll = 0.f;
 }
 
 Scene::~Scene()
@@ -84,7 +78,7 @@ void Scene::graphicsUpdate(const float dt)
 	renderLight.draw();
 }
 
-void Scene::initCube()
+void Scene::initLight()
 {
  	light.setVertices([](unsigned i, MeshBase::Vertex&d){d.position *= 0.5f;d.color = LIGHT_SPECULAR;});
 
@@ -92,10 +86,20 @@ void Scene::initCube()
 	modelLight.block<3, 1>(0, 3) = LIGHT_POSITION;
 	renderLight.setMesh(&light);
 	renderLight.setCamera(&camera);
+	renderLight.setRender();
+}
 
+void Scene::initCube()
+{
+	// load texture
+	string filename = "container.jpg";
+	img = imread(filename);
+	cvtColor(img, img, COLOR_BGR2RGB);
+
+	renderCube.setTexImg(img.cols, img.rows, img.data);
 	renderCube.setMesh(&cube);
 	renderCube.setCamera(&camera);
-	renderCube.setTexImg(img.cols, img.rows, img.data);
+	renderCube.setRender();
 }
 
 void Scene::initPhysics()
@@ -112,15 +116,9 @@ void Scene::initPhysics()
 	mPBD.mConstraints.emplace_back(std::make_shared<Stretching>(mPBD, 0, 1, 10.f));
 }
 
-void Scene::loadResource()
+void Scene::initTeapot()
 {
-	string filename = "container.jpg";
-	img = imread(filename);
-	cvtColor(img, img, COLOR_BGR2RGB);
-}
-
-void Scene::loadModel()
-{
+	// load model
 	vector<Loader::Vec3f> x;
 	vector<MeshFaceIndices> faces;
 	vector<Loader::Vec3f> normals;
@@ -128,6 +126,7 @@ void Scene::loadModel()
 	Loader::Vec3f scale{1.f, 1.f, 1.f};
 	Loader::loadObj(TeapotFileName, &x, &faces, &normals, &texcoords, scale);
 
+	// feed data to mesh struct
 	teapot.data.resize(x.size());
 	auto f = [&x, &normals, &texcoords](unsigned i, MeshBase::Vertex&d){
 		 d =MeshBase::Vertex(Eigen::Vector3f{x[i][0], x[i][1], x[i][2]});
@@ -143,6 +142,7 @@ void Scene::loadModel()
 	}
 	teapot.recomputeNormals(teapot.data);
 
+	// set model render
 	MeshBasicRender::Material materialTeapot;
 	materialTeapot.ambient = {1.0f, 0.5f, 0.3f};
 	materialTeapot.diffuse = {1.0f, 0.5f, 0.3f};
@@ -150,6 +150,7 @@ void Scene::loadModel()
 	materialTeapot.shininess = 32.0f;
 	renderTeapot.setMaterial(materialTeapot);
 	renderTeapot.setMesh(&teapot);
+
 	MeshBasicRender::Light light;
 	light.position = LIGHT_POSITION;
 	light.ambient = LIGHT_AMBIENT;
@@ -157,4 +158,5 @@ void Scene::loadModel()
 	light.specular = LIGHT_SPECULAR;
 	renderTeapot.setLight(light);
 	renderTeapot.setCamera(&camera);
+	renderTeapot.setRender();
 }

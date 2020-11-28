@@ -22,6 +22,8 @@ public:
     void setPose(Eigen::Matrix4f& m){model=m;};
     void setCamera(Camera* cam){camera = cam;};
 
+    void setRender();
+
     /**
      * @brief material's ambient diffuse specular and shiness cofficient
      * 

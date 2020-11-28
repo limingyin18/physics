@@ -14,13 +14,17 @@ void MeshBasicRender::_draw()
 	glDrawElements(GL_TRIANGLES, (GLsizei)meshBase->indices.size(), GL_UNSIGNED_INT, 0);
 }
 
-void MeshBasicRender::setMesh(MeshBase* m)
+void MeshBasicRender::setRender()
 {
-	meshBase = m;
 	setVAO();
 	addShader();
 	linkShader();
 	addUniforms();
+}
+
+void MeshBasicRender::setMesh(MeshBase* m)
+{
+	meshBase = m;
 }
 
 void MeshBasicRender::setTexImg(int w, int h, unsigned char* data)
