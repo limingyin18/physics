@@ -14,6 +14,7 @@
 #include "PiratePhysics/CollisionResolution.hpp"
 #include "PiratePhysics/PositionBasedDynamics.hpp"
 #include "PiratePhysics/Constraint.hpp"
+#include "PiratePhysics/AABBTree.hpp"
 
 class Scene : public SceneBase
 {

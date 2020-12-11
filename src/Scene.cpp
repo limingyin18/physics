@@ -159,4 +159,6 @@ void Scene::initTeapot()
 	renderTeapot.setLight(light);
 	renderTeapot.setCamera(&camera);
 	renderTeapot.setRender();
+
+	AABBTree aabbTree(x.data(), x.size(), teapot.indices.data(), faces.size());
 }
