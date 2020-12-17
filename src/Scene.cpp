@@ -43,13 +43,13 @@ void Scene::update()
 void Scene::physicsUpdate(const float dt)
 {
 	mPBD.dt = dt;
-	for(auto &rb:mPBD.mRigiBodies)
+	for (auto &rb : mPBD.mRigiBodies)
 	{
-		rb.mVelocity[1] += -dt*rb.mInvMass*10.f;
-		rb.mBaryCenter += dt*rb.mVelocity;
+		rb.mVelocity[1] += -dt * rb.mInvMass * 10.f;
+		rb.mBaryCenter += dt * rb.mVelocity;
 	}
 
-	for(auto &c:mPBD.mConstraints)
+	for (auto &c : mPBD.mConstraints)
 	{
 		c->solveConstraint();
 	}
@@ -80,7 +80,7 @@ void Scene::graphicsUpdate(const float dt)
 
 void Scene::initLight()
 {
- 	light.setVertices([](unsigned i, MeshBase::Vertex&d){d.position *= 0.5f;d.color = LIGHT_SPECULAR;});
+	light.setVertices([](unsigned i, MeshBase::Vertex &d) {d.position *= 0.5f;d.color = LIGHT_SPECULAR; });
 
 	modelLight.setIdentity();
 	modelLight.block<3, 1>(0, 3) = LIGHT_POSITION;
@@ -122,19 +122,19 @@ void Scene::initTeapot()
 	vector<Loader::Vec3f> x;
 	vector<MeshFaceIndices> faces;
 	vector<Loader::Vec3f> normals;
-    vector<Loader::Vec2f> texcoords;
+	vector<Loader::Vec2f> texcoords;
 	Loader::Vec3f scale{1.f, 1.f, 1.f};
 	Loader::loadObj(TeapotFileName, &x, &faces, &normals, &texcoords, scale);
 
 	// feed data to mesh struct
 	teapot.data.resize(x.size());
-	auto f = [&x, &normals, &texcoords](unsigned i, MeshBase::Vertex&d){
+	auto f = [&x, &normals, &texcoords](unsigned i, MeshBase::Vertex &d) {
 		 d =MeshBase::Vertex(Eigen::Vector3f{x[i][0], x[i][1], x[i][2]});
-		 d.color = Eigen::Vector3f{1.0f, 1.0f, 1.0f};};
- 	teapot.setVertices(f);
-	teapot.indices.reserve(3*faces.size());
+		 d.color = Eigen::Vector3f{1.0f, 1.0f, 1.0f}; };
+	teapot.setVertices(f);
+	teapot.indices.reserve(3 * faces.size());
 	teapot.indices.clear();
-	for(auto &v:faces)
+	for (auto &v : faces)
 	{
 		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[0] - 1));
 		teapot.indices.push_back(static_cast<unsigned>(v.posIndices[1] - 1));
@@ -160,5 +160,40 @@ void Scene::initTeapot()
 	renderTeapot.setCamera(&camera);
 	renderTeapot.setRender();
 
-	AABBTree aabbTree(x.data(), x.size(), teapot.indices.data(), faces.size());
+	vector<Vector3f> testVertices(x.size());
+	for (size_t i = 0; i < x.size(); ++i)
+	{
+		testVertices[i][0] = x[i][0];
+		testVertices[i][1] = x[i][1];
+		testVertices[i][2] = x[i][2];
+	}
+
+	AABBTree aabbTree(testVertices.data(), x.size(), teapot.indices.data(), faces.size());
+
+	Eigen::Vector3f maxExtents(-numeric_limits<float>::max(),
+							   -numeric_limits<float>::max(),
+							   -numeric_limits<float>::max());
+
+	Eigen::Vector3f minExtents(numeric_limits<float>::max(),
+							   numeric_limits<float>::max(),
+							   numeric_limits<float>::max());
+	for (auto &v : testVertices)
+	{
+		maxExtents[0] = maxExtents[0] > v[0] ? maxExtents[0] : v[0];
+		maxExtents[1] = maxExtents[1] > v[1] ? maxExtents[1] : v[1];
+		maxExtents[2] = maxExtents[2] > v[2] ? maxExtents[2] : v[2];
+
+		minExtents[0] = minExtents[0] < v[0] ? minExtents[0] : v[0];
+		minExtents[1] = minExtents[1] < v[1] ? minExtents[1] : v[1];
+		minExtents[2] = minExtents[2] < v[2] ? minExtents[2] : v[2];
+	}
+	unsigned width = maxExtents[0] - minExtents[0];
+	unsigned height = maxExtents[1] - minExtents[1];
+	unsigned depth = maxExtents[2] - minExtents[2];
+	vector<unsigned> volume;
+	Voxelize(testVertices.data(), testVertices.size(),
+			 teapot.indices.data(), faces.size(), width, height,
+			 depth, volume, minExtents, maxExtents);
+
+	int aa = 1;
 }

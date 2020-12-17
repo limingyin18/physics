@@ -2,10 +2,11 @@
 
 using namespace Eigen;
 using namespace std;
+using namespace PiratePhysics;
 
 static unsigned sDepth = 0;
 
-AABBTree::AABBTree(const std::array<float, 3> *vertices, unsigned numVerts,
+AABBTree::AABBTree(const Vector3f *vertices, unsigned numVerts,
                    const unsigned *indices, unsigned numFaces) : mVertices(vertices), mNumVerts(numVerts),
                                                                               mIndices(indices), mNumFaces(numFaces)
 {
@@ -42,9 +43,9 @@ void AABBTree::CalculateFaceBounds(unsigned *faces, unsigned numFaces,
     // calculate face bounds
     for(unsigned i = 0; i < numFaces; ++i)
     {
-        array<float, 3> a = mVertices[mIndices[faces[i]*3+0]];
-        array<float, 3> b = mVertices[mIndices[faces[i]*3+1]];
-        array<float, 3> c = mVertices[mIndices[faces[i]*3+2]];
+        Vector3f a = mVertices[mIndices[faces[i]*3+0]];
+        Vector3f b = mVertices[mIndices[faces[i]*3+1]];
+        Vector3f c = mVertices[mIndices[faces[i]*3+2]];
 
         minExtents[0] = min(a[0], minExtents[0]);
         minExtents[1] = min(a[1], minExtents[1]);
@@ -169,4 +170,210 @@ unsigned AABBTree::PartitionSAH(Node &n, unsigned *faces, unsigned numFaces)
 	std::sort(faces, faces+numFaces, predicate);
 
 	return bestIndex+1;
+}
+
+bool AABBTree::TraceRay(const Eigen::Vector3f& start, const Vector3f& dir, float& outT,
+        float& u, float& v, float& w, float& faceSign, uint32_t& faceIndex) const
+{
+    Vector3f rcp_dir(1.0f/dir[0], 1.0f/dir[1], 1.0f/dir[2]);
+
+    outT = numeric_limits<float>::max();
+
+    TraceRecursive(0, start, dir, outT, u, v, w, faceSign, faceIndex);
+
+    return outT != numeric_limits<float>::max();
+}
+
+void AABBTree::TraceRecursive(uint32_t nodeIndex,
+    const Eigen::Vector3f& start, const Eigen::Vector3f& dir,
+    float& outT, float& outU, float& outV, float& outW,
+    float& faceSign, uint32_t& faceIndex) const
+{
+	const Node& node = mNodes[nodeIndex];
+
+    if (node.mFaces == NULL)
+    {
+        // find closest node
+        const Node& leftChild = mNodes[node.mChildren+0];
+        const Node& rightChild = mNodes[node.mChildren+1];
+
+        float dist[2] = {numeric_limits<float>::max(), numeric_limits<float>::max()};
+
+        IntersectRayAABB(start, dir, leftChild.mMinExtents, leftChild.mMaxExtents, dist[0], NULL);
+        IntersectRayAABB(start, dir, rightChild.mMinExtents, rightChild.mMaxExtents, dist[1], NULL);
+        
+        uint32_t closest = 0;
+        uint32_t furthest = 1;
+		
+        if (dist[1] < dist[0])
+        {
+            closest = 1;
+            furthest = 0;
+        }		
+
+        if (dist[closest] < outT)
+            TraceRecursive(node.mChildren+closest, start, dir, outT, outU, outV, outW, faceSign, faceIndex);
+
+        if (dist[furthest] < outT)
+            TraceRecursive(node.mChildren+furthest, start, dir, outT, outU, outV, outW, faceSign, faceIndex);
+    }
+    else
+    {
+        Vector3f normal;
+        float t, u, v, w, s;
+
+        for (uint32_t i=0; i < node.mNumFaces; ++i)
+        {
+            uint32_t indexStart = node.mFaces[i]*3;
+
+            const Vector3f& a = mVertices[mIndices[indexStart+0]];
+            const Vector3f& b = mVertices[mIndices[indexStart+1]];
+            const Vector3f& c = mVertices[mIndices[indexStart+2]];
+
+
+            if (IntersectRayTriTwoSided(start, dir, a, b, c, t, u, v, w, s))
+            {
+                if (t < outT)
+                {
+                    outT = t;
+					outU = u;
+					outV = v;
+					outW = w;
+					faceSign = s;
+					faceIndex = node.mFaces[i];
+                }
+            }
+        }
+    }
+}
+
+bool AABBTree::IntersectRayAABB(const Vector3f& start, const Vector3f& dir,
+    const Vector3f& min, const Vector3f& max, float& t, Vector3f* normal) const
+{
+	//! calculate candidate plane on each axis
+	float tx = -1.0f, ty = -1.0f, tz = -1.0f;
+	bool inside = true;
+			
+	//! use unrolled loops
+
+	//! x
+	if (start[0] < min[0])
+	{
+		if (dir[0] != 0.0f)
+			tx = (min[0]-start[0])/dir[0];
+		inside = false;
+	}
+	else if (start[0] > max[0])
+	{
+		if (dir[0] != 0.0f)
+			tx = (max[0]-start[0])/dir[0];
+		inside = false;
+	}
+
+	//! y
+	if (start[1] < min[1])
+	{
+		if (dir[1] != 0.0f)
+			ty = (min[1]-start[1])/dir[1];
+		inside = false;
+	}
+	else if (start[1] > max[1])
+	{
+		if (dir[1] != 0.0f)
+			ty = (max[1]-start[1])/dir[1];
+		inside = false;
+	}
+
+	//! z
+	if (start[2] < min[2])
+	{
+		if (dir[2] != 0.0f)
+			tz = (min[2]-start[2])/dir[2];
+		inside = false;
+	}
+	else if (start[2] > max[2])
+	{
+		if (dir[2] != 0.0f)
+			tz = (max[2]-start[2])/dir[2];
+		inside = false;
+	}
+
+	//! if point inside all planes
+	if (inside)
+    {
+        t = 0.0f;
+		return true;
+    }
+
+	//! we now have t values for each of possible intersection planes
+	//! find the maximum to get the intersection point
+	float tmax = tx;
+	int taxis = 0;
+
+	if (ty > tmax)
+	{
+		tmax = ty;
+		taxis = 1;
+	}
+	if (tz > tmax)
+	{
+		tmax = tz;
+		taxis = 2;
+	}
+
+	if (tmax < 0.0f)
+		return false;
+
+	//! check that the intersection point lies on the plane we picked
+	//! we don't test the axis of closest intersection for precision reasons
+
+	//! no eps for now
+	float eps = 0.0f;
+
+	Vector3f hit = start + dir*tmax;
+
+	if ((hit[0] < min[0]-eps || hit[0] > max[0]+eps) && taxis != 0)
+		return false;
+	if ((hit[1] < min[1]-eps || hit[1] > max[1]+eps) && taxis != 1)
+		return false;
+	if ((hit[2] < min[2]-eps || hit[2] > max[2]+eps) && taxis != 2)
+		return false;
+
+	//! output results
+	t = tmax;
+			
+	return true;
+}
+
+
+bool AABBTree::IntersectRayTriTwoSided(const Vector3f& p, const Vector3f& dir, const Vector3f& a,
+        const Vector3f& b, const Vector3f& c, float& t, float& u, float& v, float& w,
+        float& sign) const
+{
+    Vector3f ab = b - a;
+    Vector3f ac = c - a;
+    Vector3f n = ab.cross(ac);
+
+    float d = n.dot(-dir);
+    float ood = 1.0f / d; // No need to check for division by zero here as infinity aritmetic will save us...
+    Vector3f ap = p - a;
+
+    t = ap.dot(n) * ood;
+    if (t < 0.0f)
+        return false;
+
+    Vector3f e = (-dir).cross(ap);
+    v = ac.dot(e) * ood;
+    if (v < 0.0f || v > 1.0f) // ...here...
+        return false;
+    w = -ab.dot(e) * ood;
+    if (w < 0.0f || v + w > 1.0f) // ...and here
+        return false;
+
+    u = 1.0f - v - w;
+    //if (normal)
+        //*normal = n;
+	sign = d;
+
+    return true;
 }

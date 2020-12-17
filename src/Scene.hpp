@@ -15,6 +15,7 @@
 #include "PiratePhysics/PositionBasedDynamics.hpp"
 #include "PiratePhysics/Constraint.hpp"
 #include "PiratePhysics/AABBTree.hpp"
+#include "PiratePhysics/Voxelize.hpp"
 
 class Scene : public SceneBase
 {
