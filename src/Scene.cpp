@@ -14,7 +14,7 @@ const Vector3f LIGHT_SPECULAR = {1.f, 1.0f, 1.0f};
 const Vector3f LIGHT_POSITION{5.0f, 5.0f, 0.0f};
 string TeapotFileName = "teapot.obj";
 
-Scene::Scene() : SceneBase(), cube(25), light(25)
+Scene::Scene() : SceneBase(), cube(25), light(25), vox1(2)
 {
 	initTeapot();
 	initCube();
@@ -76,6 +76,12 @@ void Scene::graphicsUpdate(const float dt)
 
 	renderLight.setPose(modelLight);
 	renderLight.draw();
+
+	for(auto &m:modelVoxs)
+	{
+		renderVox.setPose(m);
+		renderVox.draw();
+	}
 }
 
 void Scene::initLight()
@@ -168,8 +174,6 @@ void Scene::initTeapot()
 		testVertices[i][2] = x[i][2];
 	}
 
-	AABBTree aabbTree(testVertices.data(), x.size(), teapot.indices.data(), faces.size());
-
 	Eigen::Vector3f maxExtents(-numeric_limits<float>::max(),
 							   -numeric_limits<float>::max(),
 							   -numeric_limits<float>::max());
@@ -187,13 +191,41 @@ void Scene::initTeapot()
 		minExtents[1] = minExtents[1] < v[1] ? minExtents[1] : v[1];
 		minExtents[2] = minExtents[2] < v[2] ? minExtents[2] : v[2];
 	}
-	unsigned width = maxExtents[0] - minExtents[0];
-	unsigned height = maxExtents[1] - minExtents[1];
-	unsigned depth = maxExtents[2] - minExtents[2];
+	unsigned width = 20;
+	unsigned height = 20;
+	unsigned depth = 20;
 	vector<unsigned> volume;
 	Voxelize(testVertices.data(), testVertices.size(),
 			 teapot.indices.data(), faces.size(), width, height,
 			 depth, volume, minExtents, maxExtents);
 
-	int aa = 1;
+	Vector3f extents(maxExtents - minExtents);
+	Vector3f delta(extents[0] / width, extents[1] / height, extents[2] / depth);
+	Vector3f offset(0.5f * delta[0], 0.5f * delta[1], 0.5f * delta[2]);
+	for(size_t x = 0; x < width; ++x)
+	{
+		for(size_t y = 0; y < height; ++y)
+		{
+			for(size_t z = 0; z < depth; ++z)
+			{
+				if(volume[z * width * height + y * width + x] == 1)
+				{
+					Matrix4f modelVoxT;
+					modelVoxT.setIdentity();
+					Vector3f pos = minExtents + Vector3f(x * delta[0] + offset[0], 
+														 y * delta[1] + offset[1] + 3.0f,
+														 z * delta[2] + offset[2]);
+					modelVoxT.block<3, 1>(0, 3) = pos;
+					modelVoxs.push_back(modelVoxT);
+				}
+			}
+		}
+	}
+	delta = delta * 0.5f * 0.8f;
+	vox1.setVertices([&delta](unsigned i, MeshBase::Vertex &d) {d.position[0] *= delta[0];
+																d.position[1] *= delta[1];
+																d.position[2] *= delta[2];});
+	renderVox.setCamera(&camera);
+	renderVox.setMesh(&vox1);
+	renderVox.setRender();
 }

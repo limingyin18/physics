@@ -8,13 +8,13 @@ using namespace PiratePhysics;
 namespace PiratePhysics
 {
 	void Voxelize(const Eigen::Vector3f *vertices, int numVertices,
-				  const unsigned *indices, int numTriangleIndices, unsigned width, unsigned height,
+				  const unsigned *indices, unsigned numFaces, unsigned width, unsigned height,
 				  unsigned depth, vector<unsigned> &volume, Vector3f minExtents, Vector3f maxExtents)
 	{
 		volume.resize(width * height * depth);
 
 		// build an aabb tree of the mesh
-		AABBTree tree(vertices, numVertices, (const uint32_t *)indices, numTriangleIndices / 3);
+		AABBTree tree(vertices, numVertices, (const uint32_t *)indices, numFaces);
 
 		// parity count method, single pass
 		const Vector3f extents(maxExtents - minExtents);
@@ -53,7 +53,10 @@ namespace PiratePhysics
 						{
 							// march along column setting bits
 							for (uint32_t k = z; k < zend; ++k)
-								volume[k * width * height + y * width + x] = uint32_t(-1);
+							{
+								//volume[k * width * height + y * width + x] = uint32_t(-1);
+								volume[k * width * height + y * width + x] = uint32_t(1);
+							}
 						}
 
 						inside = !inside;

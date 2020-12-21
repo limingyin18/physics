@@ -55,4 +55,8 @@ private:
 
     MeshBase teapot;
     PhongRender renderTeapot;
+
+    Cube vox1;
+    MeshBasicRender renderVox;
+    std::vector<Eigen::Matrix4f> modelVoxs;
 };
