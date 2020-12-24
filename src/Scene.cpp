@@ -48,6 +48,7 @@ void Scene::physicsUpdate(const float dt)
 		rb.mVelocity[1] += -dt * rb.mInvMass * 10.f;
 		rb.mBaryCenter += dt * rb.mVelocity;
 	}
+	cout << mPBD.mRigiBodies[2].mVelocity[1] << endl;
 
 	for (auto &c : mPBD.mConstraints)
 	{
@@ -62,6 +63,12 @@ void Scene::physicsUpdate(const float dt)
 	modelCube2.setIdentity();
 	modelCube2.block<3, 3>(0, 0) = box2.getRotation();
 	modelCube2.block<3, 1>(0, 3) = mPBD.mRigiBodies[1].mBaryCenter;
+
+	for(size_t i = 2; i < modelVoxs.size()+2; ++i)
+	{
+		Matrix4f &m = modelVoxs[i-2];
+		m.block<3, 1>(0, 3) = mPBD.mRigiBodies[i].mBaryCenter;
+	}
 }
 
 void Scene::graphicsUpdate(const float dt)
@@ -120,6 +127,14 @@ void Scene::initPhysics()
 	mPBD.mRigiBodies[1].mVelocity = Vector3f(0.f, 0.f, 0.f);
 
 	mPBD.mConstraints.emplace_back(std::make_shared<Stretching>(mPBD, 0, 1, 10.f));
+
+	for(auto &m : modelVoxs)
+	{
+		mPBD.mRigiBodies.emplace_back(1.0f);
+		RigidBody &rg = mPBD.mRigiBodies.back();
+		rg.mBaryCenter = m.block<3, 1>(0, 3);
+		rg.mVelocity = Vector3f(0.f, 10.f, 0.f);
+	}
 }
 
 void Scene::initTeapot()

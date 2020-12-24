@@ -31,4 +31,23 @@ namespace PiratePhysics
 
         void solveConstraint() override;
     };
+
+    class ShapeMatchingConstraint : public Constraint
+    {
+    public:
+        ShapeMatchingConstraint(PositionBasedDynamics &, const unsigned num,
+            const std::vector<unsigned> &inds);
+        virtual ~ShapeMatchingConstraint();
+
+        void solveConstraint() override;
+
+        Vector3f mRestCM;
+        Matrix3f mInvRestMat;
+        std::vector<Eigen::Vector3f> mX0;
+        std::vector<Eigen::Vector3f> mX;
+        std::vector<Eigen::Vector3f> mCorr;
+        std::vector<Eigen::Vector3f> mNumClusters;
+        std::vector<float> mW;
+        std::vector<unsigned> indices;
+    };
 }
