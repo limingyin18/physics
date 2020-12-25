@@ -9,6 +9,5 @@ set(CXX_EXTENSIONS OFF)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
-find_package(OpenCV CONFIG REQUIRED)
 
 add_subdirectory(src)

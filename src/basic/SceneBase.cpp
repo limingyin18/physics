@@ -79,7 +79,7 @@ void SceneBase::initGLFW()
     }
     glfwMakeContextCurrent(window);
     glfwSetWindowUserPointer(window, this);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     // Set callback function
     glfwSetKeyCallback(window, key_callback);

@@ -4,7 +4,7 @@ using namespace std;
 using namespace Eigen;
 using namespace PiratePhysics;
 
-constexpr float EPSILON = 1e-6;
+constexpr float EPSILON = 1e-6f;
 
 CollisionShape::CollisionShape(const Vector3f &origin, const Matrix3f &rot, const Vector3f &velocity,
     const Vector3f &omega, const float density) :

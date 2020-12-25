@@ -8,8 +8,6 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC})
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     Eigen3::Eigen
     glfw
-    opencv_core 
-    opencv_imgcodecs
     basic
     PiratePhysics)
 

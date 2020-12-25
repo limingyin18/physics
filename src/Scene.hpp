@@ -3,7 +3,6 @@
 #include <chrono>
 #include <array>
 #include <random>
-#include <opencv2/opencv.hpp>
 #include "basic/SceneBase.hpp"
 #include "basic/MeshBasic.hpp"
 #include "basic/Shader.hpp"
@@ -51,7 +50,6 @@ private:
 
     Cube cube;
     SolidRender renderCube;
-    cv::Mat img;
 
     MeshBase teapot;
     PhongRender renderTeapot;

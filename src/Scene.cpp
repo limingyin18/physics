@@ -1,9 +1,12 @@
-#include "Scene.hpp"
 #include <iostream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "basic/stb_image.h"
+
+#include "Scene.hpp"
 
 using namespace std;
 using namespace Eigen;
-using namespace cv;
 using namespace PiratePhysics;
 using namespace BasicGL;
 
@@ -105,14 +108,15 @@ void Scene::initLight()
 void Scene::initCube()
 {
 	// load texture
-	string filename = "container.jpg";
-	img = imread(filename);
-	cvtColor(img, img, COLOR_BGR2RGB);
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
 
-	renderCube.setTexImg(img.cols, img.rows, img.data);
+	renderCube.setTexImg(width, height, data);
 	renderCube.setMesh(&cube);
 	renderCube.setCamera(&camera);
 	renderCube.setRender();
+
+	stbi_image_free(data);
 }
 
 void Scene::initPhysics()

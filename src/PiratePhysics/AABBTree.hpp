@@ -119,8 +119,8 @@ namespace PiratePhysics
         unsigned mInnerNodes = 0;
         unsigned mLeafNodes = 0;
 
-        unsigned GetNumFaces() const { return mNumFaces; }
-        unsigned GetNumNodes() const { return mNodes.size(); }
+        size_t GetNumFaces() const { return mNumFaces; }
+        size_t GetNumNodes() const { return mNodes.size(); }
 
         void CalculateFaceBounds(unsigned *faces, unsigned numFaces,
                                  Eigen::Vector3f &outMinExtents, Eigen::Vector3f &outMaxExtents);
